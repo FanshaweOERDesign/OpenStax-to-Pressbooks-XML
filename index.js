@@ -41,7 +41,10 @@ for (const rule of ast.stylesheet.rules) {
 
 async function getTableOfContents(pageUrl) {
 
-    const browser = await puppeteer.launch(); // Add `{ headless: false }` to see it
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
     await page.goto(pageUrl);
 

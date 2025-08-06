@@ -13,7 +13,7 @@ import puppeteer from 'puppeteer';
 
 
 const app = express();
-const PORT = 3008;
+const PORT = 3000;
 
 // setup static pages in public folder
 app.use(express.static('public'));

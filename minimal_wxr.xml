@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+  xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:wp="http://wordpress.org/export/1.2/"
+>
+<channel>
+  <title>My Multi-Part Book</title>
+  <link>https://example.pressbooks.pub/multipartbook</link>
+  <description>Sample book with parts and chapters</description>
+  <language>en-US</language>
+  <wp:wxr_version>1.2</wp:wxr_version>
+  <wp:base_site_url>https://example.pressbooks.pub/</wp:base_site_url>
+  <wp:base_blog_url>https://example.pressbooks.pub/multipartbook</wp:base_blog_url>
+
+  <!-- Required taxonomy -->
+  <wp:term>
+    <wp:term_id>1</wp:term_id>
+    <wp:term_taxonomy><![CDATA[chapter-type]]></wp:term_taxonomy>
+    <wp:term_slug><![CDATA[standard]]></wp:term_slug>
+    <wp:term_name><![CDATA[Standard]]></wp:term_name>
+  </wp:term>
+
+  <!-- Part 1 -->
+  <item>
+    <title><![CDATA[Part 1: Foundations]]></title>
+    <link>https://example.pressbooks.pub/multipartbook/part/foundations/</link>
+    <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <guid isPermaLink="false">https://example.pressbooks.pub/multipartbook/?p=100</guid>
+    <description></description>
+    <content:encoded><![CDATA[]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>100</wp:post_id>
+    <wp:post_date><![CDATA[2025-06-30 00:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2025-06-30 00:00:00]]></wp:post_date_gmt>
+    <wp:post_name><![CDATA[foundations]]></wp:post_name>
+    <wp:status><![CDATA[publish]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>1</wp:menu_order>
+    <wp:post_type><![CDATA[part]]></wp:post_type>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- Chapter in Part 1 -->
+  <item>
+    <title><![CDATA[Chapter 1: What is Science?]]></title>
+    <link>https://example.pressbooks.pub/multipartbook/chapter/what-is-science/</link>
+    <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <guid isPermaLink="false">https://example.pressbooks.pub/multipartbook/?p=101</guid>
+    <description></description>
+    <content:encoded><![CDATA[<p>Science is a systematic enterprise...</p>]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>101</wp:post_id>
+    <wp:post_date><![CDATA[2025-06-30 00:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2025-06-30 00:00:00]]></wp:post_date_gmt>
+    <wp:post_name><![CDATA[what-is-science]]></wp:post_name>
+    <wp:status><![CDATA[web-only]]></wp:status>
+    <wp:post_parent>100</wp:post_parent>
+    <wp:menu_order>1</wp:menu_order>
+    <wp:post_type><![CDATA[chapter]]></wp:post_type>
+    <wp:is_sticky>0</wp:is_sticky>
+    <category domain="chapter-type" nicename="standard"><![CDATA[Standard]]></category>
+  </item>
+
+  <!-- Another Chapter in Part 1 -->
+  <item>
+    <title><![CDATA[Chapter 2: The Scientific Method]]></title>
+    <link>https://example.pressbooks.pub/multipartbook/chapter/scientific-method/</link>
+    <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <guid isPermaLink="false">https://example.pressbooks.pub/multipartbook/?p=102</guid>
+    <description></description>
+    <content:encoded><![CDATA[<p>Observation, hypothesis, experiment...</p>]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>102</wp:post_id>
+    <wp:post_date><![CDATA[2025-06-30 00:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2025-06-30 00:00:00]]></wp:post_date_gmt>
+    <wp:post_name><![CDATA[scientific-method]]></wp:post_name>
+    <wp:status><![CDATA[web-only]]></wp:status>
+    <wp:post_parent>100</wp:post_parent>
+    <wp:menu_order>2</wp:menu_order>
+    <wp:post_type><![CDATA[chapter]]></wp:post_type>
+    <wp:is_sticky>0</wp:is_sticky>
+    <category domain="chapter-type" nicename="standard"><![CDATA[Standard]]></category>
+  </item>
+
+  <!-- Part 2 -->
+  <item>
+    <title><![CDATA[Part 2: Applications]]></title>
+    <link>https://example.pressbooks.pub/multipartbook/part/applications/</link>
+    <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <guid isPermaLink="false">https://example.pressbooks.pub/multipartbook/?p=200</guid>
+    <description></description>
+    <content:encoded><![CDATA[]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>200</wp:post_id>
+    <wp:post_date><![CDATA[2025-06-30 00:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2025-06-30 00:00:00]]></wp:post_date_gmt>
+    <wp:post_name><![CDATA[applications]]></wp:post_name>
+    <wp:status><![CDATA[publish]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>2</wp:menu_order>
+    <wp:post_type><![CDATA[part]]></wp:post_type>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- Chapter in Part 2 -->
+  <item>
+    <title><![CDATA[Chapter 3: Biology in Everyday Life]]></title>
+    <link>https://example.pressbooks.pub/multipartbook/chapter/everyday-biology/</link>
+    <pubDate>Mon, 30 Jun 2025 00:00:00 +0000</pubDate>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <guid isPermaLink="false">https://example.pressbooks.pub/multipartbook/?p=201</guid>
+    <description></description>
+    <content:encoded><![CDATA[<p>Biology affects what we eat, how we live...</p>]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>201</wp:post_id>
+    <wp:post_date><![CDATA[2025-06-30 00:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2025-06-30 00:00:00]]></wp:post_date_gmt>
+    <wp:post_name><![CDATA[everyday-biology]]></wp:post_name>
+    <wp:status><![CDATA[web-only]]></wp:status>
+    <wp:post_parent>200</wp:post_parent>
+    <wp:menu_order>1</wp:menu_order>
+    <wp:post_type><![CDATA[chapter]]></wp:post_type>
+    <wp:is_sticky>0</wp:is_sticky>
+    <category domain="chapter-type" nicename="standard"><![CDATA[Standard]]></category>
+  </item>
+
+</channel>
+</rss>

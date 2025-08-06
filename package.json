@@ -1,0 +1,22 @@
+{
+  "name": "open-stax-to-wxr",
+  "version": "1.0.0",
+  "description": "Scrapes open-stax resource and converts to Pressbooks XML file",
+  "license": "ISC",
+  "author": "Jason Benoit",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "css": "^3.0.0",
+    "express": "^5.1.0",
+    "he": "^1.2.0",
+    "jsdom": "^26.1.0",
+    "mathml-to-latex": "^1.5.0",
+    "p-limit": "^6.2.0",
+    "puppeteer": "^24.16.0",
+    "xmlbuilder2": "^3.1.1"
+  }
+}

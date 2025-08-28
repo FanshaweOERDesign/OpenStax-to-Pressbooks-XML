@@ -251,7 +251,6 @@ async function scrapeOpenStax(pageUrl) {
                                 figure.appendChild(figcaption);
                                 figure.removeChild(caption);
                             }
-
                         });
 
                         const learningObjectives = dom.window.document.querySelector('.learning-objectives');

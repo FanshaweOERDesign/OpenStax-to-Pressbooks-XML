@@ -31,7 +31,6 @@
             flex-direction: column;
             align-items: center;
             gap: 1em;
-            margin-top: 10vh;
         }
 
 
@@ -79,7 +78,8 @@
         <h1>OpenStax to Pressbooks XML</h1>
         <form id="importForm">
             <label for="sourceUrl">OpenStax URL:</label>
-            <input type="url" id="sourceUrl" name="sourceUrl" required placeholder="https://openstax.org/books/example">
+            <input type="url" id="sourceUrl" name="sourceUrl" required placeholder="https://openstax.org/books/example"
+                maxlength="1000">
             <button type="submit">Get Pressbooks XML</button>
         </form>
         <div id="status" style="margin-top:1em;color:#006400;"></div>
@@ -93,9 +93,15 @@
                 License</a>.</div>
     </footer>
     <script>
+        function clientSideLimits(input, maxLength = 1000) {
+            return input
+                .slice(0, maxLength)
+                .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, ''); // Remove problematic chars
+        }
+
         document.getElementById('importForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const url = document.getElementById('sourceUrl').value;
+            const url = clientSideLimits(document.getElementById('sourceUrl').value);
             const status = document.getElementById('status');
             status.textContent = 'Importing... This may take a few minutes.';
 

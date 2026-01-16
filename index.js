@@ -37,13 +37,13 @@ for (const rule of ast.stylesheet.rules) {
     }
 }
 
-const MAX_CONCURRENT_SCRAPES = 2;
+const MAX_CONCURRENT_SCRAPES = 5;
 
 // Used to limit the number of concurrent scrape requests sent to the /scrape-openstax endpoint
 const scrapeLimit = pLimit(MAX_CONCURRENT_SCRAPES);
 
 // (global subsection limiter): limits how many chapter/subsection fetch+parse tasks run at once across all scrapes
-const fetchLimit = pLimit(3);
+const fetchLimit = pLimit(5);
 
 let browserPromise = null;
 
@@ -82,11 +82,11 @@ async function getTableOfContents(pageUrl) {
     await page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
     // Wait for the button and click it
-    await page.waitForSelector(".show-toc", { visible: true, timeout: 60000 });
+    await page.waitForSelector(".show-toc", { visible: true, timeout: 120000 });
     await page.click(".show-toc");
 
     // Optionally wait for content to appear
-    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 60000 });
+    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 120000 });
 
     // Grab the HTML
     return await page.$eval(".table-of-contents", (el) => el.outerHTML);

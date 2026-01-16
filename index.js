@@ -37,13 +37,13 @@ for (const rule of ast.stylesheet.rules) {
     }
 }
 
-const MAX_CONCURRENT_SCRAPES = 5;
+const MAX_CONCURRENT_SCRAPES = 2;
 
 // Used to limit the number of concurrent scrape requests sent to the /scrape-openstax endpoint
 const scrapeLimit = pLimit(MAX_CONCURRENT_SCRAPES);
 
 // (global subsection limiter): limits how many chapter/subsection fetch+parse tasks run at once across all scrapes
-const fetchLimit = pLimit(5);
+const fetchLimit = pLimit(3);
 
 let browserPromise = null;
 

@@ -53,11 +53,11 @@ async function getTableOfContents(pageUrl) {
     await page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
     // Wait for the button and click it
-    await page.waitForSelector(".show-toc", { visible: true, timeout: 60000 });
+    await page.waitForSelector(".show-toc", { visible: true, timeout: 120000 });
     await page.click(".show-toc");
 
     // Optionally wait for content to appear
-    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 60000 });
+    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 120000 });
 
     // Grab the HTML
     return await page.$eval(".table-of-contents", (el) => el.outerHTML);

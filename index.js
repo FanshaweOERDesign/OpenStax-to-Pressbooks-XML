@@ -428,7 +428,7 @@ app.get('/scrape-openstax', async (req, res) => {
     }
 
     // Limit Number of Scrapes that run at once.
-    if(activeScapes >= 2) {
+    if(activeScrapes >= 2) {
         return res.status(429).json({
             queued: true,
             message: 'Your request is queued because the server is busy processing other requests. Please retry in ~30 seconds.',

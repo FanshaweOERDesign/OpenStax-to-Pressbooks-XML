@@ -103,7 +103,7 @@
             e.preventDefault();
             const url = clientSideLimits(document.getElementById('sourceUrl').value);
             const status = document.getElementById('status');
-            status.textContent = 'Initiating Import...';
+            status.textContent = 'Importing... This may take a few minutes.';
 
             try {
                 // Adjust endpoint as needed
@@ -115,7 +115,6 @@
                 } else
                     if (!response.ok) throw new Error('Server error');
 
-                status.textContent = 'Importing... This may take a few minutes.';
                 const data = await response.json();
 
                 if (!data.xml) throw new Error('No XML returned from server');

@@ -79,7 +79,6 @@ async function getTableOfContents(pageUrl) {
 
   
   try {
-    page = await browser.newPage();
     await page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
     // Wait for the button and click it

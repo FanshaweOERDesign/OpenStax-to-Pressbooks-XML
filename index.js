@@ -238,7 +238,7 @@ async function scrapeOpenStax(pageUrl) {
     });
 
     // Scrape the OpenStax HTML content for each subsection
-    const fetchWithTimeout = async (url, timeoutMs = 2000) => {
+    const fetchWithTimeout = async (url, timeoutMs = 5000) => {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -257,7 +257,7 @@ async function scrapeOpenStax(pageUrl) {
             const subsectionPromises = chapter.subsections.map((subsection) =>
                 fetchLimit(async () => {
                     try {
-                        const response = await fetchWithTimeout(subsection.url, 10000);
+                        const response = await fetchWithTimeout(subsection.url, 20000);
                         if (!response.ok) {
                             throw new Error(`Failed to fetch ${subsection.url}`);
                         }

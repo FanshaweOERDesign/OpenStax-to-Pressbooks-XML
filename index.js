@@ -11,13 +11,11 @@ import css from 'css';
 import { MathMLToLaTeX } from 'mathml-to-latex';
 import puppeteer from 'puppeteer';
 
-
 const app = express();
 const PORT = 3000;
 
 // setup static pages in public folder
 app.use(express.static('public'));
-
 
 const cssText = readFileSync(resolve('./default.css'), 'utf-8');
 const usedClasses = new Set();
@@ -47,14 +45,38 @@ const scrapeLimit = pLimit(MAX_CONCURRENT_SCRAPES);
 // (global subsection limiter): limits how many chapter/subsection fetch+parse tasks run at once across all scrapes
 const fetchLimit = pLimit(5);
 
+let browserPromise = null;
+
+async function getBrowser() {
+  if (!browserPromise) {
+    browserPromise = puppeteer.launch({
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+      ],
+    });
+  }
+  return browserPromise;
+}
+
+async function closeBrowser() {
+  if (browserPromise) {
+    const browser = await browserPromise.catch(() => null);
+    browserPromise = null;
+    if (browser) await browser.close().catch(() => {});
+  }
+}
+
+process.on("SIGINT", async () => { await closeBrowser(); process.exit(0); });
+process.on("SIGTERM", async () => { await closeBrowser(); process.exit(0); });
+
+
 async function getTableOfContents(pageUrl) {
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
+  const browser = await getBrowser();
+  const page = await browser.newPage();
 
-  let page;
   
   try {
     page = await browser.newPage();
@@ -73,7 +95,7 @@ async function getTableOfContents(pageUrl) {
   } finally {
     // Close page first (most important for RAM), then browser
     if (page) await page.close().catch(() => {});
-    await browser.close().catch(() => {});
+    // await browser.close().catch(() => {});
   }
 }
 
@@ -429,10 +451,9 @@ app.get('/scrape-openstax', async (req, res) => {
 
     // Limit Number of Scrapes that run at once.
     if(scrapeLimit.activeCount >= MAX_CONCURRENT_SCRAPES) {
-        console.log(scrapeLimit.activeCount);
         return res.status(429).json({
             queued: true,
-            message: 'The server is currently busy processing (' + scrapeLimit.activeCount + ') other OpenStax books. Please retry in ~30 seconds.',
+            message: 'The server is currently busy processing a few other OpenStax books. Please retry in ~30 seconds.',
             retryAfterSeconds: 30
         });
     }
@@ -440,8 +461,8 @@ app.get('/scrape-openstax', async (req, res) => {
     try {
         
         const xml = await scrapeLimit(() => scrapeOpenStax(pageUrl));
-        res.set('Content-Type', 'application/json');
-        res.send({ xml });
+        res.json({ xml });
+
     } catch (error) {
         console.error('Error scraping OpenStax:', error);
         res.status(500).send('Error scraping OpenStax');

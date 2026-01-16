@@ -41,8 +41,10 @@ for (const rule of ast.stylesheet.rules) {
 
 let activeScrapes = 0;
 
+const MAX_CONCURRENT_SCRAPES = 2;
+
 // Used to limit the number of concurrent scrape requests sent to the /scrape-openstax endpoint
-const scrapeLimit = pLimit(2);
+const scrapeLimit = pLimit(MAX_CONCURRENT_SCRAPES);
 
 // (global subsection limiter): limits how many chapter/subsection fetch+parse tasks run at once across all scrapes
 const fetchLimit = pLimit(5);
@@ -428,7 +430,7 @@ app.get('/scrape-openstax', async (req, res) => {
     }
 
     // Limit Number of Scrapes that run at once.
-    if(activeScrapes >= scrapeLimit) {
+    if(activeScrapes >= MAX_CONCURRENT_SCRAPES) {
         return res.status(429).json({
             queued: true,
             message: 'The OpenStax-to-Pressbook XML application is currently busy processing (' + activeScrapes + ') other OpenStax books. Please retry in ~30 seconds.',

@@ -39,6 +39,12 @@ for (const rule of ast.stylesheet.rules) {
     }
 }
 
+// Used to limit the number of concurrent scrape requests sent to the /scrape-openstax endpoint
+const scrapeLimit = pLimit(2);
+
+// (global subsection limiter): limits how many chapter/subsection fetch+parse tasks run at once across all scrapes
+const fetchLimit = pLimit(5);
+
 async function getTableOfContents(pageUrl) {
 
   const browser = await puppeteer.launch({
@@ -222,12 +228,11 @@ async function scrapeOpenStax(pageUrl) {
             throw error;
         }
     };
-    const limit = pLimit(5);
 
     const chaptersWithHtml = await Promise.all(
         chapters.map(async (chapter) => {
             const subsectionPromises = chapter.subsections.map((subsection) =>
-                limit(async () => {
+                fetchLimit(async () => {
                     try {
                         const response = await fetchWithTimeout(subsection.url, 10000);
                         if (!response.ok) {
@@ -420,7 +425,7 @@ app.get('/scrape-openstax', async (req, res) => {
         return res.status(400).send('Missing url query parameter');
     }
     try {
-        const xml = await scrapeOpenStax(pageUrl);
+        const xml = await scrapeLimit(() => scrapeOpenStax(pageUrl));
         res.set('Content-Type', 'application/json');
         res.send({ xml });
     } catch (error) {

@@ -131,7 +131,7 @@
                 URL.revokeObjectURL(downloadUrl);
                 status.textContent = 'Download started.';
             } catch (err) {
-                status.textContent = 'It seems we ran into an issue while processing your request. Please double-check the OpenStax URL you provided and try again in ~30 seconds - ' + err.message);
+                status.textContent = 'It seems we ran into an issue while processing your request. Please double-check the OpenStax URL you provided and try again in ~30 seconds - ' + err.message;
             }
 
         });

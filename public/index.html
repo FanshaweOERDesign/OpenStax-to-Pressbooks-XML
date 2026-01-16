@@ -103,12 +103,19 @@
             e.preventDefault();
             const url = clientSideLimits(document.getElementById('sourceUrl').value);
             const status = document.getElementById('status');
-            status.textContent = 'Importing... This may take a few minutes.';
+            status.textContent = 'Initiating Import...';
 
             try {
                 // Adjust endpoint as needed
                 const response = await fetch(`/scrape-openstax?url=${encodeURIComponent(url)}`);
-                if (!response.ok) throw new Error('Server error');
+                if(response.status === 429) {
+                    const data = await response.json();
+                    status.textContent = data.message;
+                    return;
+                } else
+                    if (!response.ok) throw new Error('Server error');
+
+                status.textContent = 'Importing... This may take a few minutes.';
                 const data = await response.json();
 
                 if (!data.xml) throw new Error('No XML returned from server');

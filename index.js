@@ -39,6 +39,8 @@ for (const rule of ast.stylesheet.rules) {
     }
 }
 
+let activeScrapes = 0;
+
 // Used to limit the number of concurrent scrape requests sent to the /scrape-openstax endpoint
 const scrapeLimit = pLimit(2);
 
@@ -59,11 +61,11 @@ async function getTableOfContents(pageUrl) {
     await page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
     // Wait for the button and click it
-    await page.waitForSelector(".show-toc", { visible: true, timeout: 120000 });
+    await page.waitForSelector(".show-toc", { visible: true, timeout: 60000 });
     await page.click(".show-toc");
 
     // Optionally wait for content to appear
-    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 120000 });
+    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 60000 });
 
     // Grab the HTML
     return await page.$eval(".table-of-contents", (el) => el.outerHTML);
@@ -424,13 +426,27 @@ app.get('/scrape-openstax', async (req, res) => {
     if (!pageUrl) {
         return res.status(400).send('Missing url query parameter');
     }
+
+    // Limit Number of Scrapes that run at once.
+    if(activeScapes >= 2) {
+        return res.status(429).json({
+            queued: true,
+            message: 'Your request is queued because the server is busy processing other requests. Please retry in ~30 seconds.',
+            retryAfterSeconds: 30
+        });
+    }
+    
     try {
+        activeScrapes++;
+        
         const xml = await scrapeLimit(() => scrapeOpenStax(pageUrl));
         res.set('Content-Type', 'application/json');
         res.send({ xml });
     } catch (error) {
         console.error('Error scraping OpenStax:', error);
         res.status(500).send('Error scraping OpenStax');
+    } finally {
+        activeScrapes--;
     }
 });
 

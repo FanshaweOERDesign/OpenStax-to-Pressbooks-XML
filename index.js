@@ -41,26 +41,32 @@ for (const rule of ast.stylesheet.rules) {
 
 async function getTableOfContents(pageUrl) {
 
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-    const page = await browser.newPage();
-    await page.goto(pageUrl);
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+
+  let page;
+  
+  try {
+    page = await browser.newPage();
+    await page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
     // Wait for the button and click it
-    await page.waitForSelector('.show-toc');
-    await page.click('.show-toc');
-
+    await page.waitForSelector(".show-toc", { visible: true, timeout: 60000 });
+    await page.click(".show-toc");
 
     // Optionally wait for content to appear
-    await page.waitForSelector('.table-of-contents');
+    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 60000 });
 
     // Grab the HTML
-    const html = await page.$eval('.table-of-contents', el => el.outerHTML);
-    await browser.close();
-
-    return html;
+    return await page.$eval(".table-of-contents", (el) => el.outerHTML);
+    
+  } finally {
+    // Close page first (most important for RAM), then browser
+    if (page) await page.close().catch(() => {});
+    await browser.close().catch(() => {});
+  }
 }
 
 const buildPressbooksXML = (book) => {

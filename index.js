@@ -39,8 +39,6 @@ for (const rule of ast.stylesheet.rules) {
     }
 }
 
-let activeScrapes = 0;
-
 const MAX_CONCURRENT_SCRAPES = 2;
 
 // Used to limit the number of concurrent scrape requests sent to the /scrape-openstax endpoint
@@ -430,16 +428,16 @@ app.get('/scrape-openstax', async (req, res) => {
     }
 
     // Limit Number of Scrapes that run at once.
-    if(activeScrapes >= MAX_CONCURRENT_SCRAPES) {
+    if(scrapeLimit.activeCount >= MAX_CONCURRENT_SCRAPES) {
+        console.log(scrapeLimit.activeCount);
         return res.status(429).json({
             queued: true,
-            message: 'The OpenStax-to-Pressbook XML application is currently busy processing (' + activeScrapes + ') other OpenStax books. Please retry in ~30 seconds.',
+            message: 'The server is currently busy processing (' + scrapeLimit.activeCount + ') other OpenStax books. Please retry in ~30 seconds.',
             retryAfterSeconds: 30
         });
     }
     
     try {
-        activeScrapes++;
         
         const xml = await scrapeLimit(() => scrapeOpenStax(pageUrl));
         res.set('Content-Type', 'application/json');
@@ -447,8 +445,6 @@ app.get('/scrape-openstax', async (req, res) => {
     } catch (error) {
         console.error('Error scraping OpenStax:', error);
         res.status(500).send('Error scraping OpenStax');
-    } finally {
-        activeScrapes--;
     }
 });
 

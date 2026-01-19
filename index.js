@@ -79,6 +79,15 @@ async function getTableOfContents(pageUrl) {
 
   
   try {
+
+      // Add interception here (before goto) to not scrape media, font, etc
+    await page.setRequestInterception(true);
+    page.on("request", (req) => {
+      const t = req.resourceType();
+      if (["image", "media", "font"].includes(t)) return req.abort();
+      req.continue();
+    });
+      
     await page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
     // Wait for the button and click it

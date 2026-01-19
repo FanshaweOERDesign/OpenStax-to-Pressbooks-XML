@@ -428,6 +428,8 @@ async function scrapeOpenStax(pageUrl) {
                     } catch (error) {
                         console.error(`Error fetching ${subsection.url}:`, error);
                         return { ...subsection, content: '' };
+                    } finally {
+                        dom.window.close?.();
                     }
                 })
             );

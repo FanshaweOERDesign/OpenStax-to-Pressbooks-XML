@@ -45,6 +45,9 @@ const scrapeLimit = pLimit(MAX_CONCURRENT_SCRAPES);
 // (global subsection limiter): limits how many chapter/subsection fetch+parse tasks run at once across all scrapes
 const fetchLimit = pLimit(3);
 
+// ensures only 1 Puppeteer TOC run happens at a time
+const tocLimit = pLimit(1);
+
 let browserPromise = null;
 
 async function getBrowser() {
@@ -220,7 +223,7 @@ async function scrapeOpenStax(pageUrl) {
         return null; // Not found
     }
     // Scrape the OpenStax Table of Contents
-    const tableOfContentsRaw = await getTableOfContents(pageUrl);
+    const tableOfContentsRaw = await tocLimit(() => getTableOfContents(pageUrl));
 
     const parser = new JSDOM(tableOfContentsRaw);
     let currPartId = 100;

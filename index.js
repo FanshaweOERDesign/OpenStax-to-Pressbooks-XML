@@ -94,7 +94,7 @@ async function getTableOfContents(pageUrl) {
   } finally {
     // Close page first (most important for RAM), then browser
     if (page) await page.close().catch(() => {});
-    await browser.close().catch(() => {});
+    // await browser.close().catch(() => {});
   }
 }
 

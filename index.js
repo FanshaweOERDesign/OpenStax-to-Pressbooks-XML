@@ -79,7 +79,7 @@ process.on("SIGTERM", async () => { await closeBrowser(); process.exit(0); });
 async function getTableOfContents(pageUrl) {
 
   const browser = await getBrowser();
-  let page = await browser.newPage();
+  const page = await browser.newPage();
 
   
   try {
@@ -462,37 +462,23 @@ app.get('/scrape-openstax', async (req, res) => {
     }
 
     // Limit Number of Scrapes that run at once.
-   /*
+   
     if(scrapeLimit.activeCount >= MAX_CONCURRENT_SCRAPES) {
         return res.status(429).json({
             queued: true,
             message: 'The server is currently busy processing a few other OpenStax books. Please retry in ~30 seconds.',
             retryAfterSeconds: 30
         });
-    } */
+    } 
+    try {
+        
+        const xml = await scrapeLimit(() => scrapeOpenStax(pageUrl));            
+        res.json({ xml });
 
-    // Queue request with concurrency limit
-    scrapeLimit(async() => {
-        try {
-            const memBefore = process.memoryUsage().heapUsed / 1024 / 1024;
-            console.log(`[Scrape Start] Memory: ${memBefore.toFixed(2)}MB`);
-            
-            const xml = await scrapeLimit(() => scrapeOpenStax(pageUrl));
-    
-            const memAfter = process.memoryUsage().heapUsed / 1024 / 1024;
-            console.log(`[Scrape End] Memory: ${memAfter.toFixed(2)}MB (Δ ${(memAfter - memBefore).toFixed(2)}MB)`);
-                
-            res.json({ xml });
-    
-        } catch (error) {
-            console.error('Error scraping OpenStax:', error);
-            res.status(500).send('Error scraping OpenStax');
-        }
-    }).catch(error => {
-        console.error('Request queue error:', error);
-        res.status(500).send('Request failed');
+    } catch (error) {
+        console.error('Error scraping OpenStax:', error);
+        res.status(500).send('Error scraping OpenStax');
     });
-});
 
 app.get('/debug/memory', (req, res) => {
     const memUsage = process.memoryUsage();

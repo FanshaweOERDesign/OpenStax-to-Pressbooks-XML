@@ -43,7 +43,7 @@ const MAX_CONCURRENT_SCRAPES = 2;
 const scrapeLimit = pLimit(MAX_CONCURRENT_SCRAPES);
 
 // (global subsection limiter): limits how many chapter/subsection fetch+parse tasks run at once across all scrapes
-const fetchLimit = pLimit(5);
+const fetchLimit = pLimit(3);
 
 // ensures only 1 Puppeteer TOC run happens at a time
 const tocLimit = pLimit(1);

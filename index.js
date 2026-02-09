@@ -478,7 +478,8 @@ app.get('/scrape-openstax', async (req, res) => {
     } catch (error) {
         console.error('Error scraping OpenStax:', error);
         res.status(500).send('Error scraping OpenStax');
-    });
+    }
+});
 
 app.get('/debug/memory', (req, res) => {
     const memUsage = process.memoryUsage();

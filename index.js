@@ -10,6 +10,8 @@ import he from 'he';
 import css from 'css';
 import { MathMLToLaTeX } from 'mathml-to-latex';
 import puppeteer from 'puppeteer';
+import { parseTableOfContents } from './toc.js';
+import { assertSafeOpenStaxUrl, sanitizeElement } from './security.js';
 
 const app = express();
 const PORT = 3000;
@@ -78,6 +80,7 @@ process.on("SIGTERM", async () => { await closeBrowser(); process.exit(0); });
 
 async function getTableOfContents(pageUrl) {
 
+  await assertSafeOpenStaxUrl(pageUrl);
   const browser = await getBrowser();
   const page = await browser.newPage();
 
@@ -86,23 +89,65 @@ async function getTableOfContents(pageUrl) {
 
       // Add interception here (before goto) to not scrape media, font, etc
     await page.setRequestInterception(true);
-    page.on("request", (req) => {
-      const t = req.resourceType();
-      if (["image", "media", "font"].includes(t)) return req.abort();
-      req.continue();
+      page.on("request", async (req) => {
+        try {
+          const t = req.resourceType();
+          if (["image", "media", "font"].includes(t)) {
+            await req.abort();
+            return;
+          }
+          await assertSafeOpenStaxUrl(req.url());
+          await req.continue();
+        } catch (error) {
+          console.warn(`Blocked browser request to ${req.url()}:`, error.message);
+          try {
+            await req.abort();
+          } catch (abortError) {
+            console.error(`Unable to abort browser request to ${req.url()}:`, abortError);
+          }
+        }
     });
       
     await page.goto(pageUrl, { waitUntil: "domcontentloaded" });
 
-    // Wait for the button and click it
-    await page.waitForSelector(".show-toc", { visible: true, timeout: 120000 });
-    await page.click(".show-toc");
+    // Book details pages link to the reader; only reader pages contain the TOC.
+    const detailsSlug = new URL(page.url()).pathname.match(/^\/details\/books\/([^/]+)\/?$/)?.[1];
+    if (detailsSlug) {
+      const readerSelector = `a[href*="/books/${detailsSlug}/pages/"]`;
+      await page.waitForSelector(readerSelector, { timeout: 30000 });
+      const readerUrl = await page.$eval(readerSelector, el => el.href);
+      await assertSafeOpenStaxUrl(readerUrl);
+      await page.goto(readerUrl, { waitUntil: 'domcontentloaded' });
+    }
 
-    // Optionally wait for content to appear
-    await page.waitForSelector(".table-of-contents", { visible: true, timeout: 120000 });
+    // The TOC can be populated while its responsive sidebar is hidden.
+    // Wait for usable content rather than the sidebar's visual state.
+    await page.waitForSelector("#toc-sidebar a.toc-content-link[href]", {
+      timeout: 120000,
+    });
 
-    // Grab the HTML
-    return await page.$eval(".table-of-contents", (el) => el.outerHTML);
+    // Collapsed tree rows do not contain their page links in the DOM.
+    const collapsed = '#toc-sidebar [role="row"][aria-expanded="false"]';
+    while (await page.$(collapsed)) {
+      const row = await page.$(collapsed);
+      const key = await row.evaluate(el => el.getAttribute('data-key'));
+      await row.evaluate(el => el.click());
+      await page.waitForFunction(key => {
+        return [...document.querySelectorAll('#toc-sidebar [role="row"]')]
+          .find(el => el.getAttribute('data-key') === key)
+          ?.getAttribute('aria-expanded') === 'true';
+      }, { timeout: 30000 }, key);
+      await row.dispose();
+    }
+
+    return {
+      html: await page.$eval("#toc-sidebar", el => el.outerHTML),
+      title: (await page.title()).split(' | ')[0].split(' - ').pop().trim(),
+      url: page.url(),
+    };
+  } catch (error) {
+    console.error("Error in getTableOfContents:", error);
+    throw error;
     
   } finally {
     // Close page first (most important for RAM), then browser
@@ -111,7 +156,7 @@ async function getTableOfContents(pageUrl) {
   }
 }
 
-const buildPressbooksXML = (book) => {
+const buildPressbooksXML = (book, { title, slug }) => {
     const channelItems = [];
 
     const taxonomy = {
@@ -123,18 +168,21 @@ const buildPressbooksXML = (book) => {
         }
     };
 
+    if (!book.length || !book.some(part => part.subsections.length)) {
+        throw new Error('No chapters found; refusing to export an empty book.');
+    }
     book.forEach(part => {
         console.log(`Processing part: ${part.title}`);
         // Part
         channelItems.push({
             item: {
                 title: { '#cdata': part.title },
-                link: `https://example.pressbooks.pub/${book.slug}/part/${part.slug}/`,
+                link: `https://example.pressbooks.pub/${slug}/part/${part.slug}/`,
                 pubDate: new Date().toUTCString(),
                 'dc:creator': 'admin',
                 guid: {
                     '@isPermaLink': 'false',
-                    '#': `https://example.pressbooks.pub/${book.slug}/?p=${part.id}`
+                    '#': `https://example.pressbooks.pub/${slug}/?p=${part.id}`
                 },
                 description: '',
                 'content:encoded': { '#cdata': '' },
@@ -157,15 +205,15 @@ const buildPressbooksXML = (book) => {
             channelItems.push({
                 item: {
                     title: { '#cdata': chapter.title },
-                    link: `https://example.pressbooks.pub/${book.slug}/chapter/${chapter.slug}/`,
+                    link: `https://example.pressbooks.pub/${slug}/chapter/${chapter.slug}/`,
                     pubDate: new Date().toUTCString(),
                     'dc:creator': 'admin',
                     guid: {
                         '@isPermaLink': 'false',
-                        '#': `https://example.pressbooks.pub/${book.slug}/?p=${chapter.id}`
+                        '#': `https://example.pressbooks.pub/${slug}/?p=${chapter.id}`
                     },
                     description: '',
-                    'content:encoded': { '#cdata': he.decode(chapter.content) },
+                    'content:encoded': { '#cdata': chapter.content },
                     'excerpt:encoded': { '#cdata': '' },
                     'wp:post_id': chapter.id,
                     'wp:post_date': '2025-06-30 00:00:00',
@@ -194,13 +242,13 @@ const buildPressbooksXML = (book) => {
             '@xmlns:dc': 'http://purl.org/dc/elements/1.1/',
             '@xmlns:wp': 'http://wordpress.org/export/1.2/',
             channel: {
-                title: book.title,
-                link: `https://example.pressbooks.pub/${book.slug}`,
-                description: `Imported version of ${book.title}`,
+                title,
+                link: `https://example.pressbooks.pub/${slug}`,
+                description: `Imported version of ${title}`,
                 language: 'en-US',
                 'wp:wxr_version': '1.2',
                 'wp:base_site_url': 'https://example.pressbooks.pub/',
-                'wp:base_blog_url': `https://example.pressbooks.pub/${book.slug}`,
+                'wp:base_blog_url': `https://example.pressbooks.pub/${slug}`,
                 ...taxonomy,
                 item: channelItems.map(i => i.item)
             }
@@ -213,55 +261,34 @@ const buildPressbooksXML = (book) => {
 
 async function scrapeOpenStax(pageUrl) {
 
-    function nextSiblingWithClass(el, className) {
-        let sibling = el.nextElementSibling;
-        while (sibling) {
-            if (sibling.classList.contains(className)) {
-                return sibling;
-            }
-            sibling = sibling.nextElementSibling;
-        }
-        return null; // Not found
-    }
-    // Scrape the OpenStax Table of Contents
-    const tableOfContentsRaw = await tocLimit(() => getTableOfContents(pageUrl));
-
-    const parser = new JSDOM(tableOfContentsRaw);
-    let currPartId = 100;
-    const chapters = Array.from(parser.window.document.querySelectorAll('.table-of-contents > .os-number')).map(el => {
-        const number = el.textContent.trim();
-        const id = currPartId;
-        const partSlug = number.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-        const partOrder = currPartId - 100;
-        let currChapterId = currPartId + 1;
-        let currChapterOrder = 0;
-
-        const title = nextSiblingWithClass(el, 'os-text')?.textContent.trim();
-        const subsections = Array.from(nextSiblingWithClass(el, 'no-bullets').querySelectorAll('li')).map(subEl => {
-            const id = currChapterId++;
-            const subTitle = subEl.textContent.trim();
-            const url = subEl.querySelector('a')?.href || '';
-            const slug = url.split('/').pop().replace(/[^a-z0-9]+/gi, '-').toLowerCase();
-            const order = currChapterOrder++;
-            return { title: subTitle, url, id, slug, order };
-
-        });
-        currPartId += 100;
-        return { id, number, title, subsections, slug: partSlug, order: partOrder };
-    });
+    const tableOfContents = await tocLimit(() => getTableOfContents(pageUrl));
+    const { parts: chapters, title, slug } = parseTableOfContents(tableOfContents);
 
     // Scrape the OpenStax HTML content for each subsection
     const fetchWithTimeout = async (url, timeoutMs = 5000) => {
+        let currentUrl = await assertSafeOpenStaxUrl(url);
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
         try {
-            const response = await fetch(url, { signal: controller.signal });
+            for (let redirects = 0; ; redirects++) {
+                const response = await fetch(currentUrl, {
+                    signal: controller.signal,
+                    redirect: 'manual'
+                });
+                if (![301, 302, 303, 307, 308].includes(response.status) ||
+                    !response.headers.get('location')) {
+                    return response;
+                }
+                if (redirects >= 5) {
+                    throw new Error(`Too many redirects fetching ${url}`);
+                }
+                const nextUrl = new URL(response.headers.get('location'), currentUrl).href;
+                await response.body?.cancel();
+                currentUrl = await assertSafeOpenStaxUrl(nextUrl);
+            }
+        } finally {
             clearTimeout(timeout);
-            return response;
-        } catch (error) {
-            clearTimeout(timeout);
-            throw error;
         }
     };
 
@@ -296,7 +323,7 @@ async function scrapeOpenStax(pageUrl) {
                                 figcaption.classList.add('wp-caption-text');
                                 figcaption.innerHTML = caption.innerHTML.replaceAll(/\n/g, '').trim();
                                 figure.appendChild(figcaption);
-                                figure.removeChild(caption);
+                                caption.remove();
                             }
                         });
 
@@ -306,7 +333,7 @@ async function scrapeOpenStax(pageUrl) {
                             const header = learningObjectives.querySelector('h2');
                             if (header) {
                                 // Remove the original header and create a new structured header
-                                learningObjectives.removeChild(header);
+                                header.remove();
                             }
                             const headerElement = dom.window.document.createElement('header');
                             headerElement.innerHTML = '<h2 class="textbox__title">Learning Objectives</h2>';
@@ -327,7 +354,7 @@ async function scrapeOpenStax(pageUrl) {
                             el.classList.add('textbox', 'textbox--exercises');
                             const header = el.querySelector('header');
                             if (header) {
-                                el.removeChild(header);
+                                header.remove();
                             }
                             const headerElement = dom.window.document.createElement('header');
                             headerElement.innerHTML = '<h2 class="textbox__title">Check Your Understanding</h2>';
@@ -356,10 +383,13 @@ async function scrapeOpenStax(pageUrl) {
                             note.classList.add('textbox', 'textbox--examples');
                             const header = note.querySelector('header');
                             if (header) {
-                                note.removeChild(header);
+                                header.remove();
                             }
                             const headerElement = dom.window.document.createElement('header');
-                            headerElement.innerHTML = `<h2 class="textbox__title">${header.textContent}</h2>`;
+                            const titleElement = dom.window.document.createElement('h2');
+                            titleElement.classList.add('textbox__title');
+                            titleElement.textContent = header?.textContent.trim() || 'Note';
+                            headerElement.appendChild(titleElement);
                             headerElement.classList.add('textbox__header');
 
                             const textboxContent = dom.window.document.createElement('div');
@@ -379,8 +409,8 @@ async function scrapeOpenStax(pageUrl) {
                         originalPageURL.href = subsection.url;
                         originalPageURL.textContent = subsection.title;
                         const originalBookURL = dom.window.document.createElement('a');
-                        originalBookURL.href = 'https://openstax.org/books/college-physics-2e/';
-                        originalBookURL.textContent = 'College Physics 2e';
+                        originalBookURL.href = `https://openstax.org/books/${slug}/`;
+                        originalBookURL.textContent = title;
                         const attributionDiv = dom.window.document.createElement('div');
                         const licenseLink = dom.window.document.createElement('a');
                         licenseLink.href = 'https://creativecommons.org/licenses/by/4.0/';
@@ -433,14 +463,15 @@ async function scrapeOpenStax(pageUrl) {
                             mathEl.replaceWith(wrapper);
                         });
 
-                        // Serialize the modified main content back to HTML
-                        const serializer = new dom.window.XMLSerializer();
-                        const html2 = serializer.serializeToString(mainContent).replace(/^\s*(&nbsp;|\s)+|(&nbsp;|\s)+\s*$/g, '');
+                        sanitizeElement(mainContent, subsection.url);
+
+                        // Serialize without decoding entities that could become active markup.
+                        const html2 = mainContent.outerHTML.replace(/^\s*(&nbsp;|\s)+|(&nbsp;|\s)+\s*$/g, '');
 
                         return { ...subsection, content: html2 };
                     } catch (error) {
                         console.error(`Error fetching ${subsection.url}:`, error);
-                        return { ...subsection, content: '' };
+                        throw error;
                     }
                 })
             );
@@ -450,15 +481,15 @@ async function scrapeOpenStax(pageUrl) {
         })
     );
 
-    const xml = buildPressbooksXML(chaptersWithHtml);
+    const xml = buildPressbooksXML(chaptersWithHtml, { title, slug });
 
     return xml;
 }
 
 app.get('/scrape-openstax', async (req, res) => {
     const pageUrl = req.query.url;
-    if (!pageUrl) {
-        return res.status(400).send('Missing url query parameter');
+    if (typeof pageUrl !== 'string' || !pageUrl) {
+        return res.status(400).send('A single url query parameter is required');
     }
 
     // Limit Number of Scrapes that run at once.

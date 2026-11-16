@@ -1,0 +1,229 @@
+- generic [ref=e1]:
+  - region "Cookie Settings" [ref=e2]:
+    - generic [ref=e3]:
+      - button "Close" [ref=e4] [cursor=pointer]
+      - img "Brand logo" [ref=e6]
+      - generic [ref=e7]:
+        - heading "Cookie Settings" [level=2] [ref=e8]
+        - generic [ref=e9]:
+          - paragraph [ref=e11]:
+            - text: This website utilizes technologies such as cookies to enable essential site functionality, as well as for analytics, personalization, and targeted advertising purposes.
+            - link "Privacy Notice" [ref=e12] [cursor=pointer]:
+              - /url: https://openstax.org/privacy
+          - group [ref=e13]:
+            - button "Customize" [ref=e14] [cursor=pointer]
+            - button "Reject All" [ref=e15] [cursor=pointer]
+            - button "Accept All" [ref=e16] [cursor=pointer]
+  - generic [ref=e17]:
+    - generic [ref=e18]: Loaded page "Free Algebra and Trigonometry Book for Download - OpenStax"
+    - link "skip to main content" [ref=e19] [cursor=pointer]:
+      - /url: "#main"
+    - banner [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - link "OpenStax" [ref=e25] [cursor=pointer]:
+            - /url: /
+            - img "OpenStax logo" [ref=e26]
+          - link "OpenStax home" [ref=e29] [cursor=pointer]:
+            - /url: /
+            - img "Rice University logo" [ref=e30]
+        - button "Toggle Meta Navigation Menu" [ref=e31] [cursor=pointer]
+    - complementary "Donation campaign announcement" [ref=e34]:
+      - button "dismiss" [ref=e35] [cursor=pointer]
+      - generic [ref=e38]:
+        - generic [ref=e39]: “Without this resource, I wouldn't have made it this far and be the teacher I am today." – Eduardo. Help us support instructors with the materials they need to do their best work.
+        - link "Give to support instructors like Eduardo" [ref=e40] [cursor=pointer]:
+          - /url: https://donate.rice.edu/os-evergreen-donation-form/?a=13873881&value=25.00&
+    - main [ref=e44]:
+      - heading [level=1] [ref=e47]:
+        - img "Algebra and Trigonometry 2e" [ref=e48]
+      - generic [ref=e49]:
+        - button "×" [ref=e51] [cursor=pointer]
+        - generic [ref=e54]:
+          - generic [ref=e56]:
+            - tablist "Book Info Tabs" [ref=e58]:
+              - tab "Book details" [selected] [ref=e59] [cursor=pointer]
+              - tab "Instructor resources" [ref=e60] [cursor=pointer]
+              - tab "Student resources" [ref=e61] [cursor=pointer]
+            - separator [ref=e62]
+          - tabpanel "Book details" [ref=e65]:
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - heading "Get the book" [level=2] [ref=e69]
+                  - generic [ref=e72]:
+                    - button "Table of contents" [ref=e74] [cursor=pointer]
+                    - link "View online" [ref=e79] [cursor=pointer]:
+                      - /url: https://openstax.org/books/algebra-and-trigonometry-2e/pages/1-introduction-to-prerequisites
+                    - link "Download a PDF" [ref=e84] [cursor=pointer]:
+                      - /url: https://assets.openstax.org/oscms-prodcms/media/documents/algebra-and-trigonometry-2e_-_WEB.pdf
+                - generic [ref=e88]:
+                  - generic [ref=e89]:
+                    - link [ref=e90] [cursor=pointer]:
+                      - /url: /interest?Algebra%20and%20Trigonometry
+                      - generic [ref=e94]: Sign up tolearn more
+                    - link [ref=e95] [cursor=pointer]:
+                      - /url: /adoption?Algebra%20and%20Trigonometry
+                      - generic [ref=e99]: Using this book?Let us know.
+                  - navigation "Order print copy Navigation" [ref=e100]:
+                    - generic [ref=e101]:
+                      - generic [ref=e102]:
+                        - heading "Individual" [level=1] [ref=e103]
+                        - link "Buy a print copy" [ref=e106] [cursor=pointer]:
+                          - /url: https://he.kendallhunt.com/product/openstax-algebra-and-trigonometry-2e-hardcover?utm_source=openstax&utm_medium=website&utm_campaign=book-details
+                      - generic [ref=e107]:
+                        - heading "Bookstore" [level=1] [ref=e108]
+                        - link "Order options" [ref=e111] [cursor=pointer]:
+                          - /url: https://he.kendallhunt.com/sites/default/files/uploadedFiles/Kendall_Hunt/OPENSTAX_PRICE_LIST_and_ORDER_FORM.pdf
+              - generic [ref=e112]:
+                - generic [ref=e113]:
+                  - heading "Summary" [level=2] [ref=e114]
+                  - generic [ref=e115]:
+                    - paragraph [ref=e116]: Algebra and Trigonometry 2e provides a comprehensive exploration of mathematical principles and meets scope and sequence requirements for a typical introductory algebra and trigonometry course. The modular approach and the richness of content ensure that the book addresses the needs of a variety of courses. Algebra and Trigonometry 2e offers a wealth of examples with detailed, conceptual explanations, building a strong foundation in the material before asking students to apply what they’ve learned.
+                    - paragraph [ref=e117]:
+                      - text: The Algebra and Trigonometry 2e revision focused on improving relevance and representation as well as mathematical clarity and accuracy. Introductory narratives, examples, and problems were reviewed and revised using a diversity, equity, and inclusion framework. Many contexts, scenarios, and images have been changed to become even more relevant to students’ lives and interests. To maintain our commitment to accuracy and precision, examples, exercises, and solutions were reviewed by multiple faculty experts. All improvement suggestions and errata updates from the first edition were considered and unified across the different formats of the text. The first edition of Algebra and Trigonometry by OpenStax is available in web view
+                      - link "here" [ref=e118] [cursor=pointer]:
+                        - /url: https://openstax.org/books/algebra-and-trigonometry/pages/1-introduction-to-prerequisites
+                      - text: .
+                    - paragraph [ref=e119]:
+                      - text: If you have encountered a white screen while accessing your OpenStax textbook, our developers suggest closing all of your
+                      - link "OpenStax.org" [ref=e120] [cursor=pointer]:
+                        - /url: http://openstax.org/
+                      - text: tabs and then loading the book again.
+                - generic [ref=e121]:
+                  - heading "Senior Contributing Authors" [level=3] [ref=e122]
+                  - generic [ref=e123]: Jay Abramson, Arizona State University
+                - generic [ref=e124]:
+                  - heading "Contributing Authors" [level=3] [ref=e125]
+                  - generic [ref=e126]: Valeree Falduto, Palm Beach State College
+                  - generic [ref=e127]: Rachael Gross, Towson University
+                  - generic [ref=e128]: David Lippman, Pierce College
+                  - generic [ref=e129]: Melonie Rasmussen, Pierce College
+                  - generic [ref=e130]: Rick Norwood, East Tennessee State University
+                  - generic [ref=e131]: Nicholas Belloit, Florida State College at Jacksonville
+                  - generic [ref=e132]: Harold Whipple, Formerly of Columbia College
+                  - generic [ref=e133]: Jean-Marie Magnier, Springfield Technical Community College
+                  - generic [ref=e134]: Christina Fernandez
+                - generic [ref=e135]:
+                  - heading "Errata" [level=3] [ref=e136]
+                  - paragraph [ref=e137]: All OpenStax textbooks undergo a rigorous review process. However, like any professional-grade textbook, errors sometimes occur. The good part is, since our books are web-based, we can make updates periodically. If you have a correction to suggest, submit it here. We review your suggestion and make necessary changes.
+                  - generic [ref=e138]:
+                    - link "Suggest a correction" [ref=e139] [cursor=pointer]:
+                      - /url: /errata/form?book=Algebra%20and%20Trigonometry%202e
+                    - link "Errata list" [ref=e140] [cursor=pointer]:
+                      - /url: /errata/?book=Algebra%20and%20Trigonometry%202e
+                - generic [ref=e141]:
+                  - generic [ref=e142]:
+                    - heading "Publish Date:" [level=4] [ref=e143]
+                    - text: Dec 21, 2021
+                  - generic [ref=e144]:
+                    - heading "Web Version Last Updated:" [level=4] [ref=e145]
+                    - text: Jun 12, 2026
+                  - generic [ref=e146]:
+                    - heading "Color:" [level=4] [ref=e147]
+                    - generic [ref=e148]: "ISBN-13: 978-1-711494-04-3"
+                  - generic [ref=e149]:
+                    - heading "Black and White:" [level=4] [ref=e150]
+                    - generic [ref=e151]: "ISBN-13: 978-1-711494-03-6"
+                  - generic [ref=e152]:
+                    - heading "Digital PDF:" [level=4] [ref=e153]
+                    - generic [ref=e154]: "ISBN-13: 978-1-951693-40-4"
+                  - generic [ref=e155]:
+                    - heading "License:" [level=4] [ref=e156]
+                    - generic [ref=e157]: by OpenStax is licensed under Creative Commons Attribution-NonCommercial-ShareAlike License v4.0
+                - generic [ref=e163]:
+                  - text: With philanthropic support, this book is used in 806 classrooms, saving students 34,930,101 dollars this school year.
+                  - link "Learn more about our impact" [ref=e164] [cursor=pointer]:
+                    - /url: /impact
+                  - text: and how you can help.
+    - contentinfo [ref=e165]:
+      - generic [ref=e166]:
+        - generic [ref=e168]:
+          - generic [ref=e169]:
+            - heading "OpenStax’s mission is to make an amazing education accessible for all." [level=2] [ref=e170]
+            - paragraph [ref=e171]:
+              - text: OpenStax is part of Rice University, which is a 501(c)(3) nonprofit.
+              - link "Give today" [ref=e172] [cursor=pointer]:
+                - /url: https://donate.rice.edu/os-evergreen-donation-form/?a=13854679
+              - text: and help us reach more students.
+          - generic [ref=e173]:
+            - heading "Help" [level=3] [ref=e174]
+            - list [ref=e175]:
+              - listitem [ref=e176]:
+                - link "Contact Us" [ref=e177] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e178]:
+                - link "Support Center" [ref=e179] [cursor=pointer]:
+                  - /url: https://help.openstax.org/s/
+              - listitem [ref=e180]:
+                - link "frequently asked questions" [ref=e181] [cursor=pointer]:
+                  - /url: /faq
+                  - text: FAQ
+              - listitem [ref=e182]:
+                - link "Order Print" [ref=e183] [cursor=pointer]:
+                  - /url: /print/
+              - listitem [ref=e184]:
+                - link "System Status" [ref=e185] [cursor=pointer]:
+                  - /url: https://status.openstax.org/
+          - generic [ref=e186]:
+            - heading "OpenStax" [level=3] [ref=e187]
+            - list [ref=e188]:
+              - listitem [ref=e189]:
+                - link "Press" [ref=e190] [cursor=pointer]:
+                  - /url: /press
+              - listitem [ref=e191]:
+                - link "Newsletter" [ref=e192] [cursor=pointer]:
+                  - /url: http://www2.openstax.org/l/218812/2016-10-04/lvk
+              - listitem [ref=e193]:
+                - link "Careers" [ref=e194] [cursor=pointer]:
+                  - /url: /careers
+          - generic [ref=e195]:
+            - heading "Policies" [level=3] [ref=e196]
+            - list [ref=e197]:
+              - listitem [ref=e198]:
+                - link "Accessibility Statement" [ref=e199] [cursor=pointer]:
+                  - /url: /accessibility-statement
+              - listitem [ref=e200]:
+                - link "Terms of Use" [ref=e201] [cursor=pointer]:
+                  - /url: /tos
+              - listitem [ref=e202]:
+                - link "Licensing" [ref=e203] [cursor=pointer]:
+                  - /url: /license
+              - listitem [ref=e204]:
+                - link "Privacy Notice" [ref=e205] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e206]:
+                - button "Manage cookies" [ref=e207] [cursor=pointer]
+        - generic [ref=e209]:
+          - generic [ref=e210]:
+            - generic [ref=e211]:
+              - text: © 1999-2026, Rice University. Except where otherwise noted, textbooks on this site are licensed under a
+              - link "Creative Commons Attribution-NonCommerical-ShareAlike 4.0 International License" [ref=e212] [cursor=pointer]:
+                - /url: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en
+              - text: .
+            - generic [ref=e213]:
+              - text: Advanced Placement
+              - superscript [ref=e214]: ®
+              - text: and AP
+              - superscript [ref=e215]: ®
+              - text: are trademarks registered and/or owned by the College Board, which is not affiliated with, and does not endorse, this site.
+          - list [ref=e216]:
+            - listitem [ref=e217]:
+              - link "OpenStax on Facebook" [ref=e218] [cursor=pointer]:
+                - /url: https://www.facebook.com/openstax
+            - listitem [ref=e221]:
+              - link "OpenStax on X" [ref=e222] [cursor=pointer]:
+                - /url: https://twitter.com/openstax
+            - listitem [ref=e225]:
+              - link "OpenStax on LinkedIn" [ref=e226] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/openstax
+            - listitem [ref=e229]:
+              - link "OpenStax on Instagram" [ref=e230] [cursor=pointer]:
+                - /url: https://www.instagram.com/openstax/
+            - listitem [ref=e233]:
+              - link "OpenStax on YouTube" [ref=e234] [cursor=pointer]:
+                - /url: https://www.youtube.com/openstax/
+            - listitem [ref=e237]:
+              - link [ref=e238] [cursor=pointer]:
+                - /url: http://www.rice.edu
+                - img "Rice University logo" [ref=e239]

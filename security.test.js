@@ -1,11 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
-import { assertSafeOpenStaxUrl, sanitizeElement } from './security.js';
+import { assertSafeOpenStaxUrl, isOpenStaxUrl, sanitizeElement } from './security.js';
 
 const publicResolver = async () => [{ address: '8.8.8.8', family: 4 }];
 
 test('allows HTTPS OpenStax domains and rejects non-OpenStax destinations', async () => {
+  assert.equal(isOpenStaxUrl('https://openstax.org/books/sample'), true);
+  assert.equal(isOpenStaxUrl('https://assets.openstax.org/book.js'), true);
+  assert.equal(isOpenStaxUrl('https://fonts.googleapis.com/css'), false);
   assert.equal(
     await assertSafeOpenStaxUrl('https://openstax.org/books/sample', publicResolver),
     'https://openstax.org/books/sample'

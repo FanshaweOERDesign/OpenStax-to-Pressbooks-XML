@@ -11,7 +11,7 @@ import css from 'css';
 import { MathMLToLaTeX } from 'mathml-to-latex';
 import puppeteer from 'puppeteer';
 import { parseTableOfContents } from './toc.js';
-import { assertSafeOpenStaxUrl, sanitizeElement } from './security.js';
+import { assertSafeOpenStaxUrl, isOpenStaxUrl, sanitizeElement } from './security.js';
 
 const app = express();
 const PORT = 3000;
@@ -89,6 +89,7 @@ async function getTableOfContents(pageUrl) {
 
       // Add interception here (before goto) to not scrape media, font, etc
     await page.setRequestInterception(true);
+      const validatedHosts = new Map();
       page.on("request", async (req) => {
         try {
           const t = req.resourceType();
@@ -96,7 +97,15 @@ async function getTableOfContents(pageUrl) {
             await req.abort();
             return;
           }
-          await assertSafeOpenStaxUrl(req.url());
+          const requestUrl = req.url();
+          if (!isOpenStaxUrl(requestUrl)) {
+            throw new Error('Only HTTPS URLs on OpenStax domains are allowed.');
+          }
+          const host = new URL(requestUrl).hostname;
+          if (!validatedHosts.has(host)) {
+            validatedHosts.set(host, assertSafeOpenStaxUrl(requestUrl));
+          }
+          await validatedHosts.get(host);
           await req.continue();
         } catch (error) {
           console.warn(`Blocked browser request to ${req.url()}:`, error.message);

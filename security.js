@@ -40,26 +40,29 @@ function isPublicAddress(address) {
   return parsed.range() === 'unicast';
 }
 
-export async function assertSafeOpenStaxUrl(value, resolveHost = lookup) {
+export function isOpenStaxUrl(value) {
   if (typeof value !== 'string') {
-    throw new Error('URL must be a string.');
+    return false;
   }
 
-  let url;
   try {
-    url = new URL(value);
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    return url.protocol === 'https:' &&
+      (host === 'openstax.org' || host.endsWith('.openstax.org')) &&
+      (!url.port || url.port === '443') &&
+      !url.username && !url.password;
   } catch {
-    throw new Error('Invalid URL.');
+    return false;
   }
+}
 
-  const host = url.hostname.toLowerCase();
-  if (url.protocol !== 'https:' ||
-      (host !== 'openstax.org' && !host.endsWith('.openstax.org')) ||
-      (url.port && url.port !== '443') ||
-      url.username || url.password) {
+export async function assertSafeOpenStaxUrl(value, resolveHost = lookup) {
+  if (!isOpenStaxUrl(value)) {
     throw new Error('Only HTTPS URLs on OpenStax domains are allowed.');
   }
-
+  const url = new URL(value);
+  const host = url.hostname.toLowerCase();
   const addresses = await resolveHost(host, { all: true, verbatim: true });
   if (!addresses.length || addresses.some(({ address }) => !isPublicAddress(address))) {
     throw new Error('OpenStax URL resolved to a non-public IP address.');
